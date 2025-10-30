@@ -24,16 +24,15 @@ export interface signupProps {
   userName: string;
   phoneNumber: string;
   plans: Plan[];
-  role: "Buyer" | "Seller";
+  role: string;
   deviceToken: string;
 }
-
 
 const AuthContext = createContext({
   user: null as UserData | null,
   loading: true,
   signUp: async (data: signupProps): Promise<UserResponse> => {
-    throw new Error('signUp not implemented');
+    throw new Error("signUp not implemented");
   },
   login: async ({ email, password }: loginProps) => {},
   logout: async () => {},
@@ -47,22 +46,17 @@ type AuthProviderProps = {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState<string | null>(null);
+  const [expiresIn, setExpiresIn] = useState<string | null>(null);
   const router = useRouter();
 
   const loadUser = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/me", {
+      const res = await api("/albums/all-categories", {
         method: "GET",
-        credentials: "include",
         headers: { Accept: "application/json" },
       });
-      if (res.ok) {
-        const { user } = await res.json();
-        setUser(user || null);
-      } else {
-        setUser(null);
-      }
     } catch (err) {
       console.error("fetch /me failed", err);
       setUser(null);
@@ -71,9 +65,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, []);
 
-  useEffect(() => {
-    loadUser();
-  }, [loadUser]);
 
   async function login({ email, password }: loginProps) {
     const res = await fetch("/api/auth/login", {
@@ -96,10 +87,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      signupData,
+      data: signupData,
     });
     const resData: UserResponse = res.data;
     setUser(resData.data || null);
+    setToken(resData.tokenData.token);
+    setExpiresIn(resData.tokenData.expiresIn);
+    localStorage.setItem("token", resData.tokenData.token);
+    localStorage.setItem("expiresIn", resData.tokenData.expiresIn);
+    localStorage.setItem("user", JSON.stringify(resData.data));
+  
     return resData as UserResponse;
   }
 

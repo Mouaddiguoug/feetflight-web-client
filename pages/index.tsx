@@ -46,7 +46,7 @@ interface signupData {
   userName: string;
   phoneNumber: string;
   plans: Plan[];
-  role: 'Buyer' | 'Seller';
+  role: string;
   deviceToken: string;
 }
 
@@ -94,7 +94,8 @@ const Auth = () => {
       const resData: UserResponse = await signUp(data);
 
       if (resData.tokenData && resData.data) {
-        setIsEmailVerificationOpen(true);
+        RouteChange();
+      //  setIsEmailVerificationOpen(true);
       } else if (resData.message) {
         toast.error(resData.message);
       }

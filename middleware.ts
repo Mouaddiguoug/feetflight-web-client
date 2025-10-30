@@ -8,26 +8,14 @@ const PUBLIC_PATHS = ['/'];
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  console.log(request.cookies)
+  const token = request.cookies.get('token');
+
   if (PUBLIC_PATHS.some((path) => pathname === path)) {
     return NextResponse.next();
   }
-
-  const token = request.cookies.get('token');
-
-  console.log(request.cookies)
-
-  if (!token) {
-    return NextResponse.redirect(new URL('/', request.url));
-  }
-
-  try {
-    const user = await verifyAuthToken(token);
-    const response = NextResponse.next();
-    response.headers.set('x-user-id', user.id);
-    return response;
-  } catch {
-    return NextResponse.redirect(new URL('/', request.url));
-  }
+  
+  NextResponse.next();
 }
 
 export const config = {

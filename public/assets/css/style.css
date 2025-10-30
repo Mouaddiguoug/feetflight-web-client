@@ -103,10 +103,22 @@ Menu Styles
 Header Styles 
 Background Image
 
+
 -------------------*/
 /* Start FontFamily Styles */
 /* inter */
 /* Montserrat */
+@layer base {
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px theme('colors.black') inset !important;
+    box-shadow: 0 0 0 1000px theme('colors.black') inset !important;
+    -webkit-text-fill-color: theme('colors.white') !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+}
 :root {
   --body-bg:	240 241 247;
   --primary:	132 90 223;
