@@ -15,19 +15,12 @@ function MyApp({ Component, pageProps }: any) {
 
   return (
     <AuthProvider>
+      <Toaster
+        position="top-right"
+        
+        reverseOrder={false}
+      />
       <Layout>
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            style: {
-              background: "#000",
-              color: "#fff",
-              border: "1px",
-              borderColor: "white",
-            },
-          }}
-          reverseOrder={false}
-        />
         <Component {...pageProps} />
       </Layout>
     </AuthProvider>

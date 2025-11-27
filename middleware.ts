@@ -1,25 +1,27 @@
-// middleware.ts
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { verifyAuthToken } from '@/shared/utils/verify-token';
+// middleware.js
+import { NextRequest, NextResponse } from 'next/server';
 
-const PUBLIC_PATHS = ['/'];
-
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  console.log(request.cookies)
-  const token = request.cookies.get('token');
-
-  if (PUBLIC_PATHS.some((path) => pathname === path)) {
-    return NextResponse.next();
-  }
+export function middleware(request: NextRequest) {
+  const url = request.nextUrl.clone();
   
-  NextResponse.next();
+  // 1. Define the current path the user is trying to access
+  const pathname = url.pathname;
+
+  // 2. Define the target path
+  const WAITLIST_PATH = '/waitlist';
+
+  // 3. Check if the user is trying to access the root path '/'
+  // AND ensure they are not already on the waitlist page to prevent infinite redirects.
+ 
+    // Modify the URL to point to the waitlist page
+    url.pathname = WAITLIST_PATH;
+    
+    // Redirect the user to the new URL
+    return NextResponse.redirect(url);
 }
 
+// 4. Configure which paths the middleware should run on
+// This pattern tells Next.js to only run the middleware for the root path ('/')
 export const config = {
-  matcher: [
-    '/home/home-page',
-  ],
+  matcher: ['/', '/signup'],
 };
