@@ -44,7 +44,7 @@ const Index = () => {
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-zinc-600 to-zinc-700 border-2 border-black" />
           </div>
           <p className="text-sm text-zinc-500">
-            over <span className="font-semibold text-zinc-400">539+</span>{" "}
+            over <span className="font-semibold text-zinc-400">39</span>{" "}
             others on the waitlist
           </p>
         </div>
