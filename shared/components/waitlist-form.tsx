@@ -36,11 +36,11 @@ const WaitlistForm = () => {
       return data;
     } catch (err) {
       setIsLoading(false);
-      const error = err as AxiosError<{ message?: string }>;
+      const error = err as AxiosError<{ message?: string; error?: string }>;
 
       // ⚠ Server responded with error
       if (error.response) {
-        toast(error.response.data.error);
+		toast(error.response?.data?.error ?? "Something went wrong.");
         return {
           success: false,
           status: error.response.status,
