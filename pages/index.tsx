@@ -10,6 +10,7 @@ import { toast } from "react-hot-toast";
 import React, { Fragment, useEffect, useState } from "react";
 import EmailVerification from "@/shared/components/email-confirmation";
 import { useAuth } from "@/shared/providers/auth-provider";
+import { AxiosError } from "axios";
 
 export interface Plan {
   name: string;
@@ -51,7 +52,7 @@ interface signupData {
 }
 
 const Auth = () => {
-  const { signUp } = useAuth();
+  const { signUp, login } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [isEmailVerificationOpen, setIsEmailVerificationOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -90,6 +91,7 @@ const Auth = () => {
     setLoading(true);
 
     try {
+      if (!validateForm()) return;
       setData({ ...data, ["plans"]: plans });
       const resData: UserResponse = await signUp(data);
 
@@ -99,6 +101,31 @@ const Auth = () => {
       } else if (resData.message) {
         toast.error(resData.message);
       }
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string; error?: string }>;
+      toast.error(error.response?.data?.error ?? "Network error. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const loginData = {
+        email: data.email,
+        password: data.password,
+        deviceToken: "unddu",
+      }
+      console.log(loginData);
+      const resData: UserResponse = await login(loginData);
+      if (resData.tokenData && resData.data) {
+        RouteChange();
+      } else if (resData.message) {
+        toast.error(resData.message);
+      }
+      setLoading(false);
     } catch (error) {
       toast.error("Network error. Try again.");
     } finally {
@@ -172,6 +199,7 @@ const Auth = () => {
         }
       }
     }
+    return true;
   };
 
   let loader = (
@@ -416,7 +444,7 @@ const Auth = () => {
               <Button
                 className="w-full h-16 rounded-xl shadow-glow"
                 disabled={loading}
-                onClick={isLogin ? () => {} : handleSignup}
+                onClick={isLogin ? (e) => handleLogin(e) : handleSignup}
               >
                 {loading
                   ? "Please wait..."

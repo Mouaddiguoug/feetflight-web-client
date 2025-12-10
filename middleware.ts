@@ -1,27 +1,47 @@
-// middleware.js
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
-  const url = request.nextUrl.clone();
-  
-  // 1. Define the current path the user is trying to access
-  const pathname = url.pathname;
+export function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
 
-  // 2. Define the target path
-  const WAITLIST_PATH = '/waitlist';
+  // Completely allow ONLY /waitlist and Next.js internal assets
+  const isWaitlist = pathname.startsWith('/waitlist') ;
+  const isNextAsset = pathname.startsWith('/_next');
+  const isStatic = pathname.startsWith('/assets');
+  const isFavicon = pathname === '/favicon.ico';
 
-  // 3. Check if the user is trying to access the root path '/'
-  // AND ensure they are not already on the waitlist page to prevent infinite redirects.
- 
-    // Modify the URL to point to the waitlist page
-    url.pathname = WAITLIST_PATH;
-    
-    // Redirect the user to the new URL
-    return NextResponse.redirect(url);
+  if (isWaitlist || isNextAsset || isStatic || isFavicon) {
+    return NextResponse.next();
+  }
+
+  // Everything else → redirect to /waitlist
+  const url = req.nextUrl.clone();
+  url.pathname = '/waitlist';
+  return NextResponse.redirect(url);
 }
 
-// 4. Configure which paths the middleware should run on
-// This pattern tells Next.js to only run the middleware for the root path ('/')
-export const config = {
-  matcher: ['/', '/signup'],
-};
+// import { NextResponse } from "next/server";
+// import type { NextRequest } from "next/server";
+
+// export function middleware(req: NextRequest) {
+//   const token = req.cookies.get("Authorization");
+
+//   // Allow access to "/" (where login & signup are)
+//   if (req.nextUrl.pathname === "/") {
+//     return NextResponse.next();
+//   }
+
+//   // If no token → block and redirect back to "/"
+//   if (!token) {
+//     return NextResponse.redirect(new URL("/", req.url));
+//   }
+
+//   // Allow request if token exists
+//   return NextResponse.next();
+// }
+
+// export const config = {
+//   matcher: [
+//     "/((?!api|static|.*\\..*|_next|favicon.ico).*)",
+//   ],
+// };

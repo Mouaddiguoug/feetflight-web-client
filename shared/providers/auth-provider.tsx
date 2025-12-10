@@ -14,6 +14,7 @@ import api from "../utils/axios";
 type loginProps = {
   email: string;
   password: string;
+  deviceToken: string;
 };
 
 export interface signupProps {
@@ -32,9 +33,11 @@ const AuthContext = createContext({
   user: null as UserData | null,
   loading: true,
   signUp: async (data: signupProps): Promise<UserResponse> => {
-    throw new Error("signUp not implemented");
+    throw new Error("SignUp not implemented");
   },
-  login: async ({ email, password }: loginProps) => {},
+  login: async (data: loginProps): Promise<UserResponse> => {
+    throw new Error("Login not implemented");
+  },
   logout: async () => {},
   refresh: async () => {},
 });
@@ -65,25 +68,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, []);
 
-
-  async function login({ email, password }: loginProps) {
-    const res = await fetch("/api/auth/login", {
+  async function login(loginData: loginProps): Promise<UserResponse> {
+    const res = await api("/auth/login", {
       method: "POST",
-      credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      data: { data: loginData },
     });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ message: "Login failed" }));
+
+    console.log(res.data);
+    if (res.status != 200) {
+      const err = await res.data.message;
       throw err;
     }
-    const data = await res.json();
+    const data = await res.data;
     setUser(data.user || null);
     return data;
   }
 
   async function signUp(signupData: signupProps): Promise<UserResponse> {
-    const res = await api.post("/signup", {
+    const res = await api.post("/auth/signup", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -96,7 +99,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     localStorage.setItem("token", resData.tokenData.token);
     localStorage.setItem("expiresIn", resData.tokenData.expiresIn);
     localStorage.setItem("user", JSON.stringify(resData.data));
-  
+
     return resData as UserResponse;
   }
 

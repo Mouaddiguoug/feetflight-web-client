@@ -16,7 +16,7 @@ export default function PrelineScript() {
     const loadPreline = async () => {
       await import("preline/preline");
 
-      window.HSStaticMethods?.autoInit();
+     
     };
 
     loadPreline();

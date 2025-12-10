@@ -39,6 +39,7 @@ export const MenuItems: any = [
     title: "Home",
     type: "link",
     active: false,
+    class: "text-sm"
   },
   {
     icon: NotificationsIcon,

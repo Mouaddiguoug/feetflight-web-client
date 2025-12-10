@@ -1,38 +1,36 @@
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
+import { Button } from "@/shared/components/ui/button";
 
 interface UserCardProps {
-  name: string;
+  username: string;
+  level: number;
   avatar: string;
-  level?: number;
-  verified?: boolean;
-  showFollow?: boolean;
+  emoji?: string;
 }
 
-export const UserCard = ({ name, avatar, level, verified, showFollow = true }: UserCardProps) => {
+export const UserCard = ({ username, level, avatar, emoji }: UserCardProps) => {
   return (
-    <div className="flex items-center gap-3 py-3">
-      <Avatar className="h-12 w-12 ring-2 ring-primary/20">
-        <AvatarImage src={avatar} />
-        <AvatarFallback>{name[0]}</AvatarFallback>
-      </Avatar>
-      <div className="flex-1 min-w-0">
+    <div className="flex items-center gap-3 py-3 group">
+      <img
+        src={avatar}
+        alt={username}
+        className="w-12 h-12 rounded-full object-cover border-2 border-[#25262b] group-hover:border-[#7c3aed]/50 transition-colors"
+      />
+      <div className="flex-1">
         <div className="flex items-center gap-2">
-          <span className="font-semibold text-foreground truncate">{name}</span>
-          {verified && <span className="text-xs">🔥</span>}
+          <span className="font-semibold text-[#fafafa]">{username}</span>
+          {emoji && <span>{emoji}</span>}
         </div>
-        {level && (
-          <Badge className="bg-gradient-level text-white border-0 text-xs px-2 mt-1">
-            ⚡ Level {level}
-          </Badge>
-        )}
+        <span className="text-xs px-3 py-1 rounded-full bg-gradient-to-r from-[#7c3aed] to-[#a855f7] text-white font-medium inline-block mt-1">
+          ⚡ Level {level}
+        </span>
       </div>
-      {showFollow && (
-        <Button variant="outline" size="sm" className="shrink-0">
-          Follow
-        </Button>
-      )}
+      <Button
+        variant="outline"
+        size="sm"
+        className="border-[#3b82f6] text-[#3b82f6] hover:bg-[#3b82f6] hover:text-white rounded-full px-6"
+      >
+        Follow
+      </Button>
     </div>
   );
 };
