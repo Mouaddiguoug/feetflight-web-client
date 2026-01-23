@@ -19,29 +19,3 @@ export function middleware(req: NextRequest) {
   url.pathname = '/waitlist';
   return NextResponse.redirect(url);
 }
-
-// import { NextResponse } from "next/server";
-// import type { NextRequest } from "next/server";
-
-// export function middleware(req: NextRequest) {
-//   const token = req.cookies.get("Authorization");
-
-//   // Allow access to "/" (where login & signup are)
-//   if (req.nextUrl.pathname === "/") {
-//     return NextResponse.next();
-//   }
-
-//   // If no token → block and redirect back to "/"
-//   if (!token) {
-//     return NextResponse.redirect(new URL("/", req.url));
-//   }
-
-//   // Allow request if token exists
-//   return NextResponse.next();
-// }
-
-// export const config = {
-//   matcher: [
-//     "/((?!api|static|.*\\..*|_next|favicon.ico).*)",
-//   ],
-// };
